@@ -1,0 +1,7 @@
+<library path="lib/libcolorized_mesh_display">
+  <class name="colorized_mesh_display/ColorizedMesh" type="colorized_mesh_display::ColorizedMeshDisplay" base_class_type="rviz::Display">
+    <description>
+      Display for a mesh with per vertex colorization
+    </description>
+  </class>
+</library>

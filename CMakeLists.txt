@@ -31,6 +31,7 @@ catkin_package(
   LIBRARIES
     colorized_mesh_visual
     ${PROJECT_NAME}
+    utils
   CATKIN_DEPENDS
     geometry_msgs
     message_runtime
@@ -89,6 +90,18 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${QT_LIBRARIES}
   colorized_mesh_visual
+)
+
+# Conversion Utilities Library
+add_library(utils
+  src/utils.cpp
+)
+add_dependencies(utils
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries(utils
+  ${catkin_LIBRARIES}
 )
 
 # Test Node

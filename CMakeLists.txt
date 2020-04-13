@@ -12,6 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
 )
 
+find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Widgets)
+add_definitions(-DQT_NO_KEYWORDS)
+
 add_message_files(
   FILES
     ColorizedMesh.msg
@@ -29,9 +32,7 @@ catkin_package(
   INCLUDE_DIRS
     include
   LIBRARIES
-    colorized_mesh_visual
     ${PROJECT_NAME}
-    utils
   CATKIN_DEPENDS
     geometry_msgs
     message_runtime
@@ -50,37 +51,17 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# QT
-add_definitions(-DQT_NO_KEYWORDS)
-
-find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
-set(QT_LIBRARIES Qt5::Widgets)
-
 # QMOC
 qt5_wrap_cpp(MOC_FILES
   include/${PROJECT_NAME}/colorized_mesh_display.h
 )
 
-qt5_wrap_cpp(TEST_MOC_FILES
-  include/${PROJECT_NAME}/test_display.h
-)
-
 ## Colorized Mesh Shape Library
-add_library(colorized_mesh_visual
-  src/colorized_mesh_visual.cpp
-)
-add_dependencies(colorized_mesh_visual
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-target_link_libraries(colorized_mesh_visual
-  ${catkin_LIBRARIES}
-)
-
-# Colorized Mesh Display Library
 add_library(${PROJECT_NAME}
-  src/colorized_mesh_display.cpp
+  src/colorized_mesh_visual.cpp
   ${MOC_FILES}
+  src/colorized_mesh_display.cpp
+  src/utils.cpp
 )
 add_dependencies(${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
@@ -88,20 +69,7 @@ add_dependencies(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
-  colorized_mesh_visual
-)
-
-# Conversion Utilities Library
-add_library(utils
-  src/utils.cpp
-)
-add_dependencies(utils
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-target_link_libraries(utils
-  ${catkin_LIBRARIES}
+  Qt5::Widgets
 )
 
 # Test Node
@@ -115,5 +83,29 @@ add_dependencies(${PROJECT_NAME}_test_node
 target_link_libraries(${PROJECT_NAME}_test_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
-  utils
+)
+
+#############
+## Install ##
+#############
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(
+  TARGETS
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_test_node
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY icons
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(FILES plugin_description.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

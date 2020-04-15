@@ -4,25 +4,21 @@
   <version>0.0.0</version>
   <description>The colorized_mesh_display package</description>
 
-  <author email="jane.doe@example.com">Jane Doe</author>
-  <maintainer email="mripperger@todo.todo">mripperger</maintainer>
+  <author email="michael.ripperger@swri.org">Michael Ripperger</author>
+  <maintainer email="michael.ripperger@swri.org">Michael Ripperger</maintainer>
 
   <license>Apache 2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>qtbase5-dev</build_depend>
   <build_depend>message_generation</build_depend>
 
   <depend>geometry_msgs</depend>
+  <depend>pcl_ros</depend>
   <depend>rviz</depend>
   <depend>shape_msgs</depend>
   <depend>std_msgs</depend>
-  <depend>pcl_ros</depend>
 
   <exec_depend>message_runtime</exec_depend>
-  <exec_depend>libqt5-core</exec_depend>
-  <exec_depend>libqt5-gui</exec_depend>
-  <exec_depend>libqt5-widgets</exec_depend>
 
   <export>
     <rviz plugin="${prefix}/plugin_description.xml"/>

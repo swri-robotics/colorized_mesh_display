@@ -1,12 +1,6 @@
 # Colorized Mesh Display
 
-An RViz plugin for visualizing a mesh with per-vertex shading.
-
-## Description
-
-This display subscribes to messages of type `ColorizedMeshStamped`, provided
-by this package. The `ColorizedMesh` message is similar to the `shape_msgs/Mesh`
-message but includes arrays for vertex normals and vertex colors.
+An RViz display plugin that subscribes to messages of type `pcl_msgs/PolygonMesh` and creates a per-vertex colorized display of the mesh
 
 ## Use-case Examples
 

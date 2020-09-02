@@ -1,7 +1,6 @@
 #ifndef COLORIZED_MESH_VISUAL_H
 #define COLORIZED_MESH_VISUAL_H
 
-//#include <colorized_mesh_display/ColorizedMesh.h>
 #include <pcl/PolygonMesh.h>
 
 namespace Ogre

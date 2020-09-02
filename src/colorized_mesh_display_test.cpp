@@ -1,12 +1,17 @@
-#include <colorized_mesh_display/ColorizedMeshStamped.h>
-#include <colorized_mesh_display/utils.h>
-#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_lib_io.h>
+#include <pcl_conversions/pcl_conversions.h>
 #include <ros/ros.h>
 #include <random>
 
-float generateRandomFloat()
+template<typename T>
+bool get(const ros::NodeHandle &nh, const std::string &key, T &val)
 {
-  return float(rand()) / float(INT_MAX);
+  if (!nh.getParam(key, val))
+  {
+    ROS_ERROR_STREAM("Failed to get '" << key << "' parameter");
+    return false;
+  }
+  return true;
 }
 
 int main(int argc, char** argv)
@@ -15,38 +20,34 @@ int main(int argc, char** argv)
   ros::NodeHandle nh, pnh("~");
 
   std::string path;
-  if(!pnh.getParam("ply_file", path))
-  {
-    ROS_ERROR("Failed to get 'ply_file' parameter");
+  if(!get(pnh, "mesh_file", path))
     return -1;
-  }
 
   std::string base_frame;
-  if(!pnh.getParam("base_frame", base_frame))
-  {
-    ROS_ERROR("Failed to get 'base_frame' parameter");
+  if(!get(pnh, "base_frame", base_frame))
     return -1;
+
+  // Load the mesh into a ROS message
+  pcl_msgs::PolygonMesh msg;
+  {
+    pcl::PolygonMesh mesh;
+    if(pcl::io::loadPolygonFile(path, mesh) < 0)
+    {
+      ROS_ERROR_STREAM("Failed to load mesh file from '" << path << "'");
+      return -1;
+    }
+    ROS_INFO_STREAM("Successfully loaded mesh file");
+
+    // Convert the mesh
+    pcl_conversions::fromPCL(mesh, msg);
+    msg.header.frame_id = base_frame;
+    msg.header.stamp = ros::Time::now();
   }
 
-  unsigned int seed = 0;
-//  pnh.param<unsigned int>("random_seed", seed, 0);
-
-  pcl::PolygonMesh mesh;
-  if(pcl::io::loadPLYFile(path, mesh) == -1)
-  {
-    ROS_ERROR("Failed to load PLY file");
-    return -1;
-  }
-
-  srand(seed);
-
-  colorized_mesh_display::ColorizedMeshStamped colorized_mesh;
-  colorized_mesh.mesh = colorized_mesh_display::fromPCLPolygonMesh(mesh);
-  colorized_mesh.header.frame_id = base_frame;
-  colorized_mesh.header.stamp = ros::Time::now();
-
-  ros::Publisher pub = nh.advertise<colorized_mesh_display::ColorizedMeshStamped>("colorized_mesh", 1, true);
-  pub.publish(colorized_mesh);
+  // Publish the mesh
+  ros::Publisher pub = nh.advertise<pcl_msgs::PolygonMesh>("colorized_mesh", 1, true);
+  pub.publish(msg);
+  ROS_INFO_STREAM("Published colorized mesh file");
 
   ros::spin();
 

@@ -1,2 +1,0 @@
-std_msgs/Header header
-colorized_mesh_display/ColorizedMesh mesh

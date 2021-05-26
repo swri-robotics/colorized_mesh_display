@@ -80,6 +80,7 @@ void ColorizedMeshVisual::visualizeMesh(const pcl::PolygonMesh& mesh)
     for(std::size_t j = 0; j < poly.vertices.size() - 2; ++j)
     {
       manual_object_->triangle(poly.vertices[0], poly.vertices[j + 1], poly.vertices[j + 2]);
+      manual_object_->triangle(poly.vertices[j + 2], poly.vertices[j + 1], poly.vertices[0]);
     }
   }
 
